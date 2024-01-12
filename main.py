@@ -1,6 +1,15 @@
 from random import randint
 import os
+import curses
+import colorama
+from colorama import *
+
 words = "words.txt"
+
+colorama.init()
+red = Fore.RED
+
+print(red + "some text")
 
 def main():
     print("Welcome to this game to check your typing speed")
@@ -26,6 +35,7 @@ def main():
 def game(para):
     os.system('cls')
     user_write = para
+    letter = curses.wrapper(main)
 
 
 def paragraph_collect(diff):
@@ -37,4 +47,13 @@ def paragraph_collect(diff):
     para = all_sen[para_index]
     return para
 
-main()
+def letter_getter(win):
+    win.clear()
+    while 1:
+        try:
+            key = win.getkey()
+            return str(key)
+        except Exception as e:
+           pass
+
+# main()
