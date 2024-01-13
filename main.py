@@ -8,8 +8,9 @@ words = "words.txt"
 
 colorama.init()
 red = Fore.RED
+green = Fore.GREEN
+reset = Fore.RESET
 
-print(red + "some text")
 
 def main():
     print("Welcome to this game to check your typing speed")
@@ -32,10 +33,10 @@ def main():
     paragraph = paragraph_collect(diff)
     game(paragraph)
 
+
 def game(para):
     os.system('cls')
-    user_write = para
-    letter = curses.wrapper(main)
+    curses.wrapper(letter_getter, para)
 
 
 def paragraph_collect(diff):
@@ -43,17 +44,28 @@ def paragraph_collect(diff):
     with open(words, 'r') as doc:
         for sentence in doc:
             all_sen.append(sentence)
-    para_index = randint(diff, diff+9)
+    para_index = randint(diff, diff + 9)
     para = all_sen[para_index]
     return para
 
-def letter_getter(win):
-    win.clear()
+
+def letter_getter(win, para):
+    cc = 0
+    chars = len(para)
+    print(para)
     while 1:
         try:
+            user_write = para.split("")
             key = win.getkey()
-            return str(key)
+            if user_write[cc] == str(key):
+                user_write[cc] = green + para[cc] + reset
+            else:
+                user_write[cc] = red + para[cc] + reset
+                win.addstr(user_write[:cc] + user_write[cc + 1:])
+                win.addstr(cc, str(key))
+            cc += 1
         except Exception as e:
-           pass
+            pass
 
-# main()
+
+main()
