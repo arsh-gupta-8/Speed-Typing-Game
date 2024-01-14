@@ -84,7 +84,7 @@ def typing(win):
                 posy += 1
             if key == "\n":
                 break
-            elif key == curses.KEY_BACKSPACE:
+            elif key in ("KEY_BACKSPACE", "\b", "\x7f"):
                 index -= 1
                 posx -= 1
                 if posx < 0 and posy > 0:
@@ -99,7 +99,8 @@ def typing(win):
                 posx += 1
                 index += 1
 
-            win.addstr(10, 10, f"index - {index}, letter - {para[index]}, key - {key}")
+            # testing purposes
+            # win.addstr(10, 10, f"index - {index}, letter - {para[index]}, key - {key}, position(x, y) - {posy, posx}")
 
             win.refresh()
 
