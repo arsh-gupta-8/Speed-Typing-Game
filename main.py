@@ -1,6 +1,8 @@
-from random import randint
-import os
 import curses
+from random import randint
+import time
+import os
+from curses import wrapper
 import colorama
 from colorama import *
 
@@ -13,6 +15,7 @@ reset = Fore.RESET
 
 
 def main():
+    global para
     print("Welcome to this game to check your typing speed")
     print("Lets begin")
     print("What difficulty would you like to play on Easy/Medium/Hard")
@@ -22,48 +25,61 @@ def main():
         if choice.upper() == "EASY" or choice.upper() == "E":
             diff = 0
         elif choice.upper() == "MEDIUM" or choice.upper() == "M":
-            diff = 11
+            diff = 10
         elif choice.upper() == "HARD" or choice.upper() == "H":
-            diff = 22
+            diff = 20
         else:
             print("Sorry this option is unavailable")
             print("What difficulty would you like to play on Easy/Medium/Hard")
             choice = input("---   ")
 
-    paragraph = paragraph_collect(diff)
-    game(paragraph)
-
-
-def game(para):
-    os.system('cls')
-    curses.wrapper(letter_getter, para)
+    para = paragraph_collect(diff)
+    game()
 
 
 def paragraph_collect(diff):
     all_sen = []
     with open(words, 'r') as doc:
         for sentence in doc:
-            all_sen.append(sentence)
+            sen = sentence.replace('\x00','').replace('\n','')
+            if sen == "":
+                pass
+            elif sen[9] == "n":
+                all_sen.append(sen[2:])
+            else:
+                all_sen.append(sen)
     para_index = randint(diff, diff + 9)
     para = all_sen[para_index]
     return para
 
 
-def letter_getter(win, para):
-    cc = 0
-    chars = len(para)
+def game():
     print(para)
-    while 1:
+    print("yo")
+    print("Press enter to begin")
+    input()
+    wrapper(typing)
+
+
+def typing(win):
+    #COLOURS
+    curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
+    green = curses.color_pair(1)
+    red = curses.color_pair(2)
+
+    win.clear()
+    win.addstr(para)
+    win.refresh()
+    pos = 0
+    run = True
+    while run:
         try:
-            user_write = para.split("")
             key = win.getkey()
-            if user_write[cc] == str(key):
-                user_write[cc] = green + para[cc] + reset
-            else:
-                user_write[cc] = red + para[cc] + reset
-                win.addstr(user_write[:cc] + user_write[cc + 1:])
-                win.addstr(cc, str(key))
-            cc += 1
+            win.refresh()
+            time.sleep(5)
+            return str(key)
+
         except Exception as e:
             pass
 
