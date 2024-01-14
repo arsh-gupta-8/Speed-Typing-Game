@@ -54,8 +54,6 @@ def paragraph_collect(diff):
 
 
 def game():
-    print(para)
-    print("yo")
     print("Press enter to begin")
     input()
     wrapper(typing)
@@ -65,20 +63,45 @@ def typing(win):
     #COLOURS
     curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
+    curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
     green = curses.color_pair(1)
     red = curses.color_pair(2)
+    white = curses.color_pair(3)
 
     win.clear()
     win.addstr(para)
     win.refresh()
-    pos = 0
+    index = 0
+    posx = 0
+    posy = 0
     run = True
     while run:
         try:
             key = win.getkey()
+            columns = curses.COLS
+            if posx == columns:
+                posx = 0
+                posy += 1
+            if key == "\n":
+                break
+            elif key == curses.KEY_BACKSPACE:
+                index -= 1
+                posx -= 1
+                if posx < 0 and posy > 0:
+                    posx = columns
+                    posy -= 1
+                win.addstr(posy, posx, para[index], white)
+            else:
+                if key == para[index]:
+                    win.addstr(posy, posx, key, green)
+                else:
+                    win.addstr(posy, posx, key, red)
+                posx += 1
+                index += 1
+
+            win.addstr(10, 10, f"index - {index}, letter - {para[index]}, key - {key}")
+
             win.refresh()
-            time.sleep(5)
-            return str(key)
 
         except Exception as e:
             pass
