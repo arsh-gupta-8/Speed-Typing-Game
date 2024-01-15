@@ -3,16 +3,8 @@ from random import randint
 from timeit import default_timer as timer
 import math
 from curses import wrapper
-import colorama
-from colorama import *
 
 words = "words.txt"
-
-colorama.init()
-red = Fore.RED
-green = Fore.GREEN
-reset = Fore.RESET
-
 
 def main():
     global para
