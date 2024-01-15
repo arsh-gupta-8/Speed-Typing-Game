@@ -1,7 +1,7 @@
 import curses
 from random import randint
 from timeit import default_timer as timer
-import os
+import math
 from curses import wrapper
 import colorama
 from colorama import *
@@ -68,6 +68,13 @@ def typing(win):
     white = curses.color_pair(3)
     yellow = curses.color_pair(4)
 
+    wrongs = []
+
+    avg_word_len = 0
+    for word in para.split(" "):
+        avg_word_len += len(word)
+    avg_word_len = avg_word_len / 50
+
     win.clear()
     win.addstr(para)
     win.refresh()
@@ -75,6 +82,7 @@ def typing(win):
     start, end = None, None
     timer_started = False
     run = True
+
     while run:
         try:
             key = win.getkey()
@@ -93,28 +101,47 @@ def typing(win):
                 if posx < 0 and posy > 0:
                     posx = columns
                     posy -= 1
+
                 win.addstr(posy, posx, para[index], white)
+                win.addstr(posy, posx, "", white)
+                if index in wrongs:
+                    wrongs.remove(index)
             else:
                 if key == para[index]:
                     win.addstr(posy, posx, key, green)
                 else:
-                    win.addstr(posy, posx, key, red)
+                    wrongs.append(index)
+                    if key == " ":
+                        win.addstr(posy, posx, "_", red)
+                    else:
+                        win.addstr(posy, posx, key, red)
                 posx += 1
                 index += 1
 
             if index == len(para):
                 end = timer()
                 run = False
-                win.addstr(6, 0, f"Your time was : {end-start} seconds", yellow)
+                wpm = (index - len(wrongs)) / (avg_word_len * (end - start))
+
+                # ALTERNATIVE METHOD
+                # percent_letter_correct = 1-(len(wrongs)/index)
+                # words_correct = percent_letter_correct * 50
+                # wpm = (words_correct/(end-start))*60
+
+                # CHECKING VARIABLES
+                # win.addstr(7, 0, f"avg word len: {avg_word_len} index: {index} wrongs: {wrongs} time taken: {end-start}", yellow)
+
+                win.addstr(6, 0, f"Your estimated words per minute is : {math.ceil(60*wpm)} WORDS!", yellow)
 
 
-            # testing purposes
+            # CHECKING VARIABLES
             # win.addstr(10, 10, f"index - {index}, letter - {para[index]}, key - {key}, position(x, y) - {posy, posx}")
 
             win.refresh()
 
             if run == False:
                 win.getch()
+
 
         except Exception as e:
             pass
