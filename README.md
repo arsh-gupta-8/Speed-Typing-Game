@@ -20,7 +20,7 @@ from colorama import *
 ~~~
 
 ### Calculation for WPM
-To calculate the words per minute I use a slightly different approach which is to check the number of letters correctly input by the user and then dividing it by the average word length and the time taken. This would result in the number of words written per second fo which I multiply by 60 to turn it into words per minute. 
+To calculate the words per minute I use a slightly different approach which is to check the number of letters correctly input by the user and then dividing it by the average word length and the time taken. This would result in the number of words written per second for which I multiply by 60 to turn it into words per minute. 
 
 ~~~python
 # index - the total nuber of characters in the paragraph
